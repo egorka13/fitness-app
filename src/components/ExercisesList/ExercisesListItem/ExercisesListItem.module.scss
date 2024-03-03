@@ -1,0 +1,25 @@
+.container {
+    height: 120px;
+    display: flex;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 5px;
+    background-color: #323F4B;
+    color: white;
+}
+
+.infoContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.infoTitle {
+    margin-bottom: 12px;
+
+    font-size: 18px;
+}
+
+.infoSubTitle {
+    font-size: 14px;
+}
