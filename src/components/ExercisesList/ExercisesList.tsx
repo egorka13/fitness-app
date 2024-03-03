@@ -43,6 +43,7 @@ export const ExercisesList: React.FC = () => {
         });
         console.error(error);
       });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
