@@ -4,7 +4,7 @@ import { ExercisesListItem } from "./ExercisesListItem/ExercisesListItem";
 import { message } from "antd";
 import { getDatabase, ref, child, get } from "firebase/database";
 
-export type ExerciseGroup = "abs" | "legs";
+export type ExerciseGroup = "abs" | "legs" | "chest" | "deltoids" | "back" | "gluteus";
 
 export type TExercisesList = Record<ExerciseGroup, any>;
 
