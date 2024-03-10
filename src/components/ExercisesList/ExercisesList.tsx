@@ -1,10 +1,9 @@
-import React from "react";
-import styles from "./ExercisesList.module.scss";
-import { ExercisesListItem } from "./ExercisesListItem/ExercisesListItem";
-import { message } from "antd";
-import { getDatabase, ref, child, get } from "firebase/database";
-
-export type ExerciseGroup = "abs" | "legs" | "chest" | "deltoids" | "back" | "gluteus";
+import React from 'react';
+import styles from './ExercisesList.module.scss';
+import { ExercisesListItem } from './ExercisesListItem/ExercisesListItem';
+import { message } from 'antd';
+import { getDatabase, ref, child, get } from 'firebase/database';
+import { ExerciseGroup } from '../../constants/ExercisesGroups';
 
 export type TExercisesList = Record<ExerciseGroup, any>;
 
@@ -22,7 +21,7 @@ export const ExercisesList: React.FC = () => {
   React.useEffect(() => {
     const dbRef = ref(getDatabase());
 
-    get(child(dbRef, "exercises"))
+    get(child(dbRef, 'exercises'))
       .then((snapshot) => {
         if (snapshot.exists()) {
           const uploadedList: TExercisesList = snapshot.val();
@@ -33,17 +32,17 @@ export const ExercisesList: React.FC = () => {
 
           setExerciseList(flattenedList);
         } else {
-          console.log("No data available");
+          console.log('No data available');
         }
       })
       .catch((error) => {
         messageApi.open({
-          type: "error",
-          content: error?.message || "Something went wrong",
+          type: 'error',
+          content: error?.message || 'Something went wrong',
         });
         console.error(error);
       });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

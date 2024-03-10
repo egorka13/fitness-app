@@ -1,10 +1,12 @@
-import React from "react";
+import React from 'react';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import styles from './App.module.scss';
-import { ExercisesList } from "./components/ExercisesList/ExercisesList";
-import { FireBaseContextProvider } from "./context/FireBaseContext";
-import firebaseConfig from "./configs/FirebaseConfig";
+import { ExercisesList } from './components/ExercisesList/ExercisesList';
+import { ExerciseDetails } from './components/ExerciseDetails/ExerciseDetails';
 
-import { initializeApp } from "firebase/app";
+import { initializeApp } from 'firebase/app';
+import { FireBaseContextProvider } from './context/FireBaseContext';
+import firebaseConfig from './configs/FirebaseConfig';
 
 function App() {
   const app = initializeApp(firebaseConfig);
@@ -12,7 +14,12 @@ function App() {
   return (
     <div className={styles.app}>
       <FireBaseContextProvider firebaseApp={app}>
-        <ExercisesList />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<ExercisesList />} />
+            <Route path="/exercise/:group/:id" element={<ExerciseDetails />} />
+          </Routes>
+        </BrowserRouter>
       </FireBaseContextProvider>
     </div>
   );
