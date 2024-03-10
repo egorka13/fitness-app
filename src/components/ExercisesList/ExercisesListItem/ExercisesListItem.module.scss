@@ -1,26 +1,28 @@
 .container {
-    height: 100px;
-    display: flex;
-    gap: 12px;
-    padding: 12px;
-    border-radius: 5px;
-    background-color: #323F4B;
-    color: white;
+  height: 100px;
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 5px;
+  background-color: #323f4b;
+  color: white;
 }
 
-.imageContainer {}
+.imageContainer {
+}
 
 .infoContainer {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  cursor: pointer;
 }
 
 .infoTitle {
-    margin-bottom: 12px;
-    font-size: 18px;
+  margin-bottom: 12px;
+  font-size: 18px;
 }
 
 .infoSubTitle {
-    font-size: 14px;
+  font-size: 14px;
 }

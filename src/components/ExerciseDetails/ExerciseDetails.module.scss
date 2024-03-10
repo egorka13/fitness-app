@@ -1,0 +1,43 @@
+.detailsContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.detailsImageContainer {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 230px;
+  background-color: black;
+  box-shadow: 0 0px 20px black;
+}
+
+.detailsCategory {
+  max-width: 120px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1;
+
+  & > span {
+    white-space: wrap;
+  }
+}
+
+.formContainer {
+  display: flex;
+  gap: 20px;
+  padding: 40px;
+}
+
+.submitContainer {
+  display: flex;
+  justify-content: center;
+}
+
+.tableContainer {
+  margin-top: 40px;
+  overflow: auto;
+}

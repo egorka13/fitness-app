@@ -1,5 +1,5 @@
-import React from "react";
-import { FirebaseApp } from "firebase/app";
+import React from 'react';
+import { FirebaseApp } from 'firebase/app';
 
 interface IFireBaseContext {
   firebaseApp: FirebaseApp | null;

@@ -1,10 +1,14 @@
-import React from "react";
-import styles from "./ExercisesListItem.module.scss";
-import { ExerciesItem } from "../ExercisesList";
-import { ExcerciseGroupMapping } from "../../../constants/ExercisesGroups";
-import { Image, message } from "antd";
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import styles from './ExercisesListItem.module.scss';
+import { ExerciesItem } from '../ExercisesList';
+import {
+  ExcerciseGroupColorMapping,
+  ExcerciseGroupMapping,
+} from '../../../constants/ExercisesGroups';
+import { Image, Tag, message } from 'antd';
 
-import { getStorage, ref, getDownloadURL } from "firebase/storage";
+import { getStorage, ref, getDownloadURL } from 'firebase/storage';
 
 export async function getImage(location: string) {
   const storage = getStorage();
@@ -22,7 +26,8 @@ export const ExercisesListItem: React.FC<ExercisesListItemProps> = ({
 }) => {
   const [messageApi, contextHolder] = message.useMessage();
 
-  const [image, setImage] = React.useState("");
+  const navigate = useNavigate();
+  const [image, setImage] = React.useState('');
 
   React.useEffect(() => {
     let wasUnmounted = false;
@@ -34,8 +39,8 @@ export const ExercisesListItem: React.FC<ExercisesListItemProps> = ({
       })
       .catch((error) => {
         messageApi.open({
-          type: "error",
-          content: error?.message || "Something went wrong",
+          type: 'error',
+          content: error?.message || 'Something went wrong',
         });
         console.error(error);
       });
@@ -45,6 +50,10 @@ export const ExercisesListItem: React.FC<ExercisesListItemProps> = ({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const handleItemClick = React.useCallback(() => {
+    navigate(`/exercise/${item.group}/${item.id}`);
+  }, [navigate, item]);
 
   return (
     <>
@@ -64,10 +73,13 @@ export const ExercisesListItem: React.FC<ExercisesListItemProps> = ({
           )}
         </div>
 
-        <div className={styles.info}>
+        <div className={styles.infoContainer} onClick={handleItemClick}>
           <div className={styles.infoTitle}>{item.name}</div>
           <div className={styles.infoSubTitle}>
-            {ExcerciseGroupMapping[item.group]}
+            <Tag color={ExcerciseGroupColorMapping[item.group]}>
+              {ExcerciseGroupMapping[item.group]}
+            </Tag>
+            {/* {ExcerciseGroupMapping[item.group]} */}
           </div>
         </div>
       </div>
