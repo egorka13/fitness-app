@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from '../ExerciseDetails.module.scss';
 import { ConfigProvider, Table, message } from 'antd';
-import { getDatabase, ref, child, get } from 'firebase/database';
+import { getDatabase, ref, child, get, onValue } from 'firebase/database';
 import { columns } from './constants';
 import {
   ExerciseDTO,
@@ -16,25 +16,33 @@ export const ExerciseDetailsHistoryTable: React.FC<
 
   const [records, setRecords] = React.useState<ExerciseRecord[]>([]);
 
+  const handleListUpdate = React.useCallback(
+    (newRecords: Record<string, ExerciseDTO>) => {
+      if (!newRecords) return;
+
+      const newList: ExerciseRecord[] = Object.values(newRecords)?.map(
+        (record, index) => ({
+          ...record,
+          key: index,
+          date: new Date(record.date).toLocaleString(),
+        })
+      );
+
+      setRecords(newList.reverse());
+    },
+    []
+  );
+
   React.useEffect(() => {
     const dbRef = ref(getDatabase());
 
+    // initially load list with records
     get(child(dbRef, `history/${exerciseId}`))
       .then((snapshot) => {
         if (snapshot.exists()) {
           const uploadedList: Record<string, ExerciseDTO> = snapshot.val();
-
           console.log(uploadedList);
-
-          setRecords(
-            Object.values(uploadedList)
-              ?.map((record, index) => ({
-                ...record,
-                key: index,
-                date: new Date(record.date).toLocaleString(),
-              }))
-              .reverse()
-          );
+          handleListUpdate(uploadedList);
         } else {
           console.log('No data available');
         }
@@ -46,6 +54,15 @@ export const ExerciseDetailsHistoryTable: React.FC<
         });
         console.error(error);
       });
+
+    // subscribe on records list updates
+    const db = getDatabase();
+    const historyRef = ref(db, `history/${exerciseId}`);
+    onValue(historyRef, (snapshot) => {
+      const uploadedList: Record<string, ExerciseDTO> = snapshot.val();
+      console.log('onValue', uploadedList);
+      handleListUpdate(uploadedList);
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
