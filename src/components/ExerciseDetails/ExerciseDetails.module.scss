@@ -22,7 +22,7 @@
   z-index: 1;
 
   & > span {
-    white-space: wrap;
+    white-space: normal !important;
   }
 }
 
