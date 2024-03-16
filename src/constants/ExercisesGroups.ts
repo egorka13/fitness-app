@@ -5,7 +5,8 @@ export type ExerciseGroup =
   | 'deltoids'
   | 'back'
   | 'gluteus'
-  | 'biceps';
+  | 'biceps'
+  | 'triceps';
 
 export const ExcerciseGroupMapping: Record<ExerciseGroup, string> = {
   abs: 'Упражнение на мышцы пресса',
@@ -15,6 +16,7 @@ export const ExcerciseGroupMapping: Record<ExerciseGroup, string> = {
   back: 'Упражнение на мышцы спины',
   gluteus: 'Упражнение на мышцы ягодиц',
   biceps: 'Упражнение на бицепс',
+  triceps: 'Упражнение на трицепс',
 };
 
 // Available colors:
@@ -33,4 +35,5 @@ export const ExcerciseGroupColorMapping: Record<ExerciseGroup, string> = {
   back: '#949398',
   gluteus: '#1F2933',
   biceps: '#FFCF5C',
+  triceps: 'rgb(10, 150, 100)',
 };
