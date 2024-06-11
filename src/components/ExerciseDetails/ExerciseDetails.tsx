@@ -8,7 +8,8 @@ import { ExerciseGroup } from '../../constants/ExercisesGroups';
 import { Button, ConfigProvider, InputNumber, message } from 'antd';
 import { SaveOutlined } from '@ant-design/icons';
 
-import { getDatabase, push, ref, set } from 'firebase/database';
+import { child, get, getDatabase, push, ref, set } from 'firebase/database';
+import { ExerciseDTO } from './ExerciseDetailsHistoryTable/types';
 
 interface ExerciseDetailsProps {}
 
@@ -49,6 +50,33 @@ export const ExerciseDetails: React.FC<ExerciseDetailsProps> = () => {
     });
   }, [id, formState.repeats, formState.weight, messageApi]);
 
+  React.useEffect(() => {
+    const dbRef = ref(getDatabase());
+
+    // initially load list with records
+    get(child(dbRef, `history/${id}`))
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          const uploadedList: Record<string, ExerciseDTO> = snapshot.val();
+          console.log(uploadedList);
+          const lastRecord = Object.values(uploadedList).pop();
+          if (lastRecord) {
+            const { weight, repeats } = lastRecord;
+            setFormState((prev) => ({ ...prev, weight, repeats }));
+          }
+        } else {
+          console.log('No data available');
+        }
+      })
+      .catch((error) => {
+        messageApi.open({
+          type: 'error',
+          content: error?.message || 'Something went wrong',
+        });
+        console.error(error);
+      });
+  }, []);
+
   return (
     <ConfigProvider
       theme={{
@@ -70,18 +98,18 @@ export const ExerciseDetails: React.FC<ExerciseDetailsProps> = () => {
             size="large"
             min={1}
             max={100000}
-            defaultValue={formState.weight}
-            addonBefore="кг"
-            onChange={handleWeightChange}
+            value={formState.repeats}
+            addonBefore="n"
+            onChange={handleRepeatsChange}
           />
 
           <InputNumber
             size="large"
             min={1}
             max={100000}
-            defaultValue={formState.repeats}
-            addonBefore="n"
-            onChange={handleRepeatsChange}
+            value={formState.weight}
+            addonBefore="кг"
+            onChange={handleWeightChange}
           />
         </div>
 
