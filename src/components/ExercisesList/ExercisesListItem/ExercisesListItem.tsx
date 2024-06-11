@@ -48,7 +48,7 @@ export const ExercisesListItem: React.FC<ExercisesListItemProps> = ({
     return () => {
       wasUnmounted = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line
   }, []);
 
   const handleItemClick = React.useCallback(() => {

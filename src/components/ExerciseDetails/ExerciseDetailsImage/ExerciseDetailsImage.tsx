@@ -42,7 +42,7 @@ export const ExerciseDetailsImage: React.FC<ExerciseDetailsImageProps> = ({
     return () => {
       wasUnmounted = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line
   }, []);
 
   return (

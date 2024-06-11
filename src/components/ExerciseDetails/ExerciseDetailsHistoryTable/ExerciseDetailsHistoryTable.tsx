@@ -63,7 +63,7 @@ export const ExerciseDetailsHistoryTable: React.FC<
       console.log('onValue', uploadedList);
       handleListUpdate(uploadedList);
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line
   }, []);
 
   return (
