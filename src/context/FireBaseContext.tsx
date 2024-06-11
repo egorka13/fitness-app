@@ -16,7 +16,7 @@ export const FireBaseContextProvider = ({
   firebaseApp,
   children,
 }: React.PropsWithChildren<IFireBaseContext>) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line
   const [firebaseAppInner, setFirebaseAppInner] = React.useState(firebaseApp);
 
   //   const setFirebaseApp = (newValue: any) => {
