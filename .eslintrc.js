@@ -1,4 +1,5 @@
 module.exports = {
+  plugins: ['react', 'react-hooks'],
   rules: {
     // enable additional rules
     quotes: ['error', 'single'],
