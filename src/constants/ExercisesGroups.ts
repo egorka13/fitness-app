@@ -1,12 +1,18 @@
-export type ExerciseGroup =
-  | 'abs'
-  | 'legs'
-  | 'chest'
-  | 'deltoids'
-  | 'back'
-  | 'gluteus'
-  | 'biceps'
-  | 'triceps';
+const EXERCISE_GROUPS = [
+  'abs',
+  'legs',
+  'chest',
+  'deltoids',
+  'back',
+  'gluteus',
+  'biceps',
+  'triceps',
+] as const;
+
+export type ExerciseGroup = (typeof EXERCISE_GROUPS)[number];
+
+export const DEFAULT_EXERCISE_GROUPS =
+  EXERCISE_GROUPS as unknown as ExerciseGroup[];
 
 export const ExcerciseGroupMapping: Record<ExerciseGroup, string> = {
   abs: 'Упражнение на мышцы пресса',
@@ -17,6 +23,17 @@ export const ExcerciseGroupMapping: Record<ExerciseGroup, string> = {
   gluteus: 'Упражнение на мышцы ягодиц',
   biceps: 'Упражнение на бицепс',
   triceps: 'Упражнение на трицепс',
+};
+
+export const ExcerciseGroupShortMapping: Record<ExerciseGroup, string> = {
+  abs: 'Пресс',
+  legs: 'Ноги',
+  deltoids: 'Плечи',
+  chest: 'Грудь',
+  back: 'Спина',
+  gluteus: 'Ягодицы',
+  biceps: 'Бицепс',
+  triceps: 'Трицепс',
 };
 
 // Available colors:
