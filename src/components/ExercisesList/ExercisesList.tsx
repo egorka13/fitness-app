@@ -1,12 +1,15 @@
 import React from 'react';
 import styles from './ExercisesList.module.scss';
 import { ExercisesListItem } from './ExercisesListItem/ExercisesListItem';
-import { Tag, message } from 'antd';
+import { Button, Tag, message } from 'antd';
 import { getDatabase, ref, child, get } from 'firebase/database';
 import {
+  DEFAULT_EXERCISE_GROUPS,
   ExcerciseGroupColorMapping,
+  ExcerciseGroupShortMapping,
   ExerciseGroup,
 } from '../../constants/ExercisesGroups';
+import { CloseOutlined, ReloadOutlined } from '@ant-design/icons';
 
 export type TExercisesList = Record<ExerciseGroup, any>;
 
@@ -19,7 +22,13 @@ export interface ExerciesItem {
 export const ExercisesList: React.FC = () => {
   const [messageApi, contextHolder] = message.useMessage();
 
+  const [defaultExerciseList, setDefaultExerciseList] = React.useState<
+    ExerciesItem[]
+  >([]);
   const [exerciseList, setExerciseList] = React.useState<ExerciesItem[]>([]);
+  const [exerciseGroups, setExerciseGroups] = React.useState<ExerciseGroup[]>(
+    DEFAULT_EXERCISE_GROUPS
+  );
 
   React.useEffect(() => {
     const dbRef = ref(getDatabase());
@@ -34,6 +43,7 @@ export const ExercisesList: React.FC = () => {
           );
 
           setExerciseList(flattenedList);
+          setDefaultExerciseList(flattenedList);
         } else {
           console.log('No data available');
         }
@@ -48,13 +58,30 @@ export const ExercisesList: React.FC = () => {
     // eslint-disable-next-line
   }, []);
 
-  const handleGroupClick = React.useCallback((group: ExerciseGroup) => {
-    setExerciseList((prev) => prev.filter((item) => item.group === group));
-  }, []);
+  const handleFiltersReset = React.useCallback(() => {
+    setExerciseList(defaultExerciseList);
+    setExerciseGroups(DEFAULT_EXERCISE_GROUPS);
+  }, [defaultExerciseList]);
 
-  const handleGroupClose = React.useCallback((group: ExerciseGroup) => {
-    setExerciseList((prev) => prev.filter((item) => item.group !== group));
-  }, []);
+  const handleGroupClick = React.useCallback(
+    (event: React.MouseEvent, group: ExerciseGroup) => {
+      event.stopPropagation();
+      setExerciseList(
+        defaultExerciseList.filter((item) => item.group === group)
+      );
+      setExerciseGroups([group]);
+    },
+    [defaultExerciseList]
+  );
+
+  const handleGroupClose = React.useCallback(
+    (event: React.MouseEvent, group: ExerciseGroup) => {
+      event.stopPropagation();
+      setExerciseList((prev) => prev.filter((item) => item.group !== group));
+      setExerciseGroups((prev) => prev.filter((item) => item !== group));
+    },
+    []
+  );
 
   return (
     <>
@@ -62,26 +89,19 @@ export const ExercisesList: React.FC = () => {
 
       <div className={styles.container}>
         <div className={styles.filterContainer}>
-          {(
-            [
-              'abs',
-              'back',
-              'biceps',
-              'chest',
-              'deltoids',
-              'gluteus',
-              'legs',
-              'triceps',
-            ] as ExerciseGroup[]
-          ).map((group) => (
+          <Button icon={<ReloadOutlined />} onClick={handleFiltersReset} />
+          {exerciseGroups.map((group) => (
             <Tag
+              className={styles.filterTag}
               bordered={false}
-              closable={true}
               color={ExcerciseGroupColorMapping[group]}
-              onClick={() => handleGroupClick(group)}
-              onClose={() => handleGroupClose(group)}
+              onClick={(event) => handleGroupClick(event, group)}
             >
-              {group}
+              {ExcerciseGroupShortMapping[group]}
+              <CloseOutlined
+                style={{ fontSize: '14px' }}
+                onClick={(event) => handleGroupClose(event, group)}
+              />
             </Tag>
           ))}
         </div>
