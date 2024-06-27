@@ -9,7 +9,13 @@ import {
   ExcerciseGroupShortMapping,
   ExerciseGroup,
 } from '../../constants/ExercisesGroups';
-import { CloseOutlined, ReloadOutlined } from '@ant-design/icons';
+import {
+  CloseOutlined,
+  LogoutOutlined,
+  ReloadOutlined,
+} from '@ant-design/icons';
+import { doSignOut, useAuth } from '../../context/AuthContext';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 export type TExercisesList = Record<ExerciseGroup, any>;
 
@@ -20,6 +26,9 @@ export interface ExerciesItem {
 }
 
 export const ExercisesList: React.FC = () => {
+  const navigate = useNavigate();
+  const { userLoggedIn } = useAuth();
+
   const [messageApi, contextHolder] = message.useMessage();
 
   const [defaultExerciseList, setDefaultExerciseList] = React.useState<
@@ -85,6 +94,8 @@ export const ExercisesList: React.FC = () => {
 
   return (
     <>
+      {!userLoggedIn && <Navigate to={'/auth'} replace={true} />}
+
       {contextHolder}
 
       <div className={styles.container}>
@@ -92,6 +103,7 @@ export const ExercisesList: React.FC = () => {
           <Button icon={<ReloadOutlined />} onClick={handleFiltersReset} />
           {exerciseGroups.map((group) => (
             <Tag
+              key={group}
               className={styles.filterTag}
               bordered={false}
               color={ExcerciseGroupColorMapping[group]}
@@ -109,6 +121,19 @@ export const ExercisesList: React.FC = () => {
         {exerciseList.map((item) => {
           return <ExercisesListItem key={item.id} item={item} />;
         })}
+
+        <Button
+          type="primary"
+          icon={<LogoutOutlined />}
+          size={'large'}
+          onClick={() =>
+            doSignOut().then(() => {
+              navigate('auth');
+            })
+          }
+        >
+          Log out
+        </Button>
       </div>
     </>
   );

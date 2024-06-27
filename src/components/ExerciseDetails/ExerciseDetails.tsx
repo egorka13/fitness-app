@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
 import styles from './ExerciseDetails.module.scss';
 import { ExerciseDetailsHistoryTable } from './ExerciseDetailsHistoryTable/ExerciseDetailsHistoryTable';
 import { ExerciseDetailsImage } from './ExerciseDetailsImage/ExerciseDetailsImage';
@@ -10,10 +10,13 @@ import { SaveOutlined } from '@ant-design/icons';
 
 import { child, get, getDatabase, push, ref, set } from 'firebase/database';
 import { ExerciseDTO } from './ExerciseDetailsHistoryTable/types';
+import { useAuth } from '../../context/AuthContext';
 
 interface ExerciseDetailsProps {}
 
 export const ExerciseDetails: React.FC<ExerciseDetailsProps> = () => {
+  const { userLoggedIn } = useAuth();
+
   const [messageApi, contextHolder] = message.useMessage();
 
   const { id, group } = useParams();
@@ -88,6 +91,8 @@ export const ExerciseDetails: React.FC<ExerciseDetailsProps> = () => {
         },
       }}
     >
+      {!userLoggedIn && <Navigate to={'/auth'} replace={true} />}
+
       {contextHolder}
 
       <div className={styles.detailsContainer}>
