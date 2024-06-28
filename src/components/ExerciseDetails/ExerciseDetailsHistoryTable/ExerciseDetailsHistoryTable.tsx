@@ -8,10 +8,13 @@ import {
   ExerciseDetailsHistoryTableProps,
   ExerciseRecord,
 } from './types';
+import { useAuth } from '../../../context/AuthContext';
 
 export const ExerciseDetailsHistoryTable: React.FC<
   ExerciseDetailsHistoryTableProps
 > = ({ exerciseId }) => {
+  const { currentUser } = useAuth();
+
   const [messageApi, contextHolder] = message.useMessage();
 
   const [records, setRecords] = React.useState<ExerciseRecord[]>([]);
@@ -37,7 +40,7 @@ export const ExerciseDetailsHistoryTable: React.FC<
     const dbRef = ref(getDatabase());
 
     // initially load list with records
-    get(child(dbRef, `history/${exerciseId}`))
+    get(child(dbRef, `history/${currentUser.uid}/${exerciseId}`))
       .then((snapshot) => {
         if (snapshot.exists()) {
           const uploadedList: Record<string, ExerciseDTO> = snapshot.val();
@@ -57,7 +60,7 @@ export const ExerciseDetailsHistoryTable: React.FC<
 
     // subscribe on records list updates
     const db = getDatabase();
-    const historyRef = ref(db, `history/${exerciseId}`);
+    const historyRef = ref(db, `history/${currentUser.uid}/${exerciseId}`);
     onValue(historyRef, (snapshot) => {
       const uploadedList: Record<string, ExerciseDTO> = snapshot.val();
       console.log('onValue', uploadedList);
