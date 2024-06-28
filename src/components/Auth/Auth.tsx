@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import styles from './Auth.module.scss';
 import {
   doCreateUserWithEmailAndPassword,
@@ -8,6 +8,7 @@ import {
 } from '../../context/AuthContext';
 import { Button } from 'antd';
 import { LoginOutlined } from '@ant-design/icons';
+import { AuthErrorCodeToHumanReadableMap } from './constants';
 
 export const Login: React.FC = () => {
   const { userLoggedIn } = useAuth();
@@ -16,10 +17,9 @@ export const Login: React.FC = () => {
 
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
+  const [password2, setPassword2] = React.useState('');
   const [emailError, setEmailError] = React.useState('');
   const [passwordError, setPasswordError] = React.useState('');
-
-  const navigate = useNavigate();
 
   const onButtonClick = async () => {
     // Set initial error values to empty
@@ -47,13 +47,22 @@ export const Login: React.FC = () => {
       return;
     }
 
+    if (!isSigningIn && password !== password2) {
+      setPasswordError('Passwords did not match');
+      return;
+    }
+
     if (isSigningIn) {
       await doSignInWithEmailAndPassword(email, password).catch((error) => {
-        setPasswordError(error.message);
+        setPasswordError(
+          AuthErrorCodeToHumanReadableMap[error.code] || error.code
+        );
       });
     } else {
       await doCreateUserWithEmailAndPassword(email, password).catch((error) => {
-        setPasswordError(error.message);
+        setPasswordError(
+          AuthErrorCodeToHumanReadableMap[error.code] || error.code
+        );
       });
     }
   };
@@ -77,11 +86,24 @@ export const Login: React.FC = () => {
       <br />
       <div className={styles.inputContainer}>
         <input
+          type="password"
           value={password}
           placeholder="Enter your password here"
           className={styles.inputBox}
           onChange={(ev) => setPassword(ev.target.value)}
         />
+        {!isSigningIn ? (
+          <>
+            <br />
+            <input
+              type="password"
+              value={password2}
+              placeholder="Repeat your password"
+              className={styles.inputBox}
+              onChange={(ev) => setPassword2(ev.target.value)}
+            />
+          </>
+        ) : null}
         <label className={styles.errorLabel}>{passwordError}</label>
       </div>
       <br />
