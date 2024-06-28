@@ -15,7 +15,7 @@ import { useAuth } from '../../context/AuthContext';
 interface ExerciseDetailsProps {}
 
 export const ExerciseDetails: React.FC<ExerciseDetailsProps> = () => {
-  const { userLoggedIn } = useAuth();
+  const { userLoggedIn, currentUser } = useAuth();
 
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -37,7 +37,7 @@ export const ExerciseDetails: React.FC<ExerciseDetailsProps> = () => {
 
   const handleFormSubmit = React.useCallback(() => {
     const db = getDatabase();
-    const historyRecordsListRef = ref(db, `history/${id}`);
+    const historyRecordsListRef = ref(db, `history/${currentUser.uid}/${id}`);
     const newHistoryRecordRef = push(historyRecordsListRef);
 
     set(newHistoryRecordRef, {
@@ -57,7 +57,7 @@ export const ExerciseDetails: React.FC<ExerciseDetailsProps> = () => {
     const dbRef = ref(getDatabase());
 
     // initially load list with records
-    get(child(dbRef, `history/${id}`))
+    get(child(dbRef, `history/${currentUser.uid}/${id}`))
       .then((snapshot) => {
         if (snapshot.exists()) {
           const uploadedList: Record<string, ExerciseDTO> = snapshot.val();
