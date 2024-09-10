@@ -13,6 +13,8 @@
   height: 230px;
   background-color: black;
   box-shadow: 0 0px 20px black;
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 30px;
 }
 
 .detailsCategory {
@@ -29,8 +31,9 @@
 
 .formContainer {
   display: flex;
+  justify-content: center;
   gap: 20px;
-  padding: 40px;
+  padding: 25px 40px;
 }
 
 .submitContainer {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './ExercisesListItem.module.scss';
-import { ExerciesItem } from '../ExercisesList';
+import { ExercisesItem } from '../ExercisesList';
 import {
   ExcerciseGroupColorMapping,
   ExcerciseGroupMapping,
@@ -20,7 +20,7 @@ export async function getImage(location: string) {
 }
 
 interface ExercisesListItemProps {
-  item: ExerciesItem;
+  item: ExercisesItem;
 }
 
 export const ExercisesListItem: React.FC<ExercisesListItemProps> = ({
@@ -64,7 +64,7 @@ export const ExercisesListItem: React.FC<ExercisesListItemProps> = ({
       <div className={styles.container}>
         <div className={styles.imageContainer}>
           {image ? (
-            <Image width={100} height={100} src={image} />
+            <Image width={100} height={100} src={image} alt={item.name} />
           ) : (
             <div style={{ width: '100px', height: '100px' }}>
               <Skeleton.Image active={true} />
@@ -78,7 +78,6 @@ export const ExercisesListItem: React.FC<ExercisesListItemProps> = ({
             <Tag color={ExcerciseGroupColorMapping[item.group]}>
               {ExcerciseGroupMapping[item.group]}
             </Tag>
-            {/* {ExcerciseGroupMapping[item.group]} */}
           </div>
         </div>
       </div>
