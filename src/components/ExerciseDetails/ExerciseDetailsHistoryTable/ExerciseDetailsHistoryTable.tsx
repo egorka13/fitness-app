@@ -44,7 +44,6 @@ export const ExerciseDetailsHistoryTable: React.FC<
       .then((snapshot) => {
         if (snapshot.exists()) {
           const uploadedList: Record<string, ExerciseDTO> = snapshot.val();
-          console.log(uploadedList);
           handleListUpdate(uploadedList);
         } else {
           console.log('No data available');
@@ -63,7 +62,6 @@ export const ExerciseDetailsHistoryTable: React.FC<
     const historyRef = ref(db, `history/${currentUser.uid}/${exerciseId}`);
     onValue(historyRef, (snapshot) => {
       const uploadedList: Record<string, ExerciseDTO> = snapshot.val();
-      console.log('onValue', uploadedList);
       handleListUpdate(uploadedList);
     });
     // eslint-disable-next-line

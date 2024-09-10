@@ -19,10 +19,11 @@ import { Navigate, useNavigate } from 'react-router-dom';
 
 export type TExercisesList = Record<ExerciseGroup, any>;
 
-export interface ExerciesItem {
+export interface ExercisesItem {
   id: string;
   name: string;
   group: ExerciseGroup;
+  isNoWeight?: boolean;
 }
 
 export const ExercisesList: React.FC = () => {
@@ -32,9 +33,9 @@ export const ExercisesList: React.FC = () => {
   const [messageApi, contextHolder] = message.useMessage();
 
   const [defaultExerciseList, setDefaultExerciseList] = React.useState<
-    ExerciesItem[]
+    ExercisesItem[]
   >([]);
-  const [exerciseList, setExerciseList] = React.useState<ExerciesItem[]>([]);
+  const [exerciseList, setExerciseList] = React.useState<ExercisesItem[]>([]);
   const [exerciseGroups, setExerciseGroups] = React.useState<ExerciseGroup[]>(
     DEFAULT_EXERCISE_GROUPS
   );
