@@ -144,14 +144,23 @@ export const ExerciseDetails: React.FC = () => {
           />
 
           {!exercise?.isNoWeight && (
-            <InputNumber
-              size="large"
-              min={1}
-              max={100000}
-              value={formState.weight}
-              addonBefore="кг"
-              onChange={handleWeightChange}
-            />
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                color: 'white',
+              }}
+            >
+              <InputNumber
+                size="large"
+                min={1}
+                max={100000}
+                value={formState.weight}
+                addonBefore="кг"
+                onChange={handleWeightChange}
+              />
+              {exercise?.isDoubleSided ? '* на каждую из сторон' : null}
+            </div>
           )}
         </div>
 

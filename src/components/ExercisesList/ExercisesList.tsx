@@ -24,6 +24,7 @@ export interface ExercisesItem {
   name: string;
   group: ExerciseGroup;
   isNoWeight?: boolean;
+  isDoubleSided?: boolean;
 }
 
 export const ExercisesList: React.FC = () => {
