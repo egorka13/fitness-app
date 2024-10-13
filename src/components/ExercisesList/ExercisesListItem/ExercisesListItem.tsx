@@ -64,7 +64,13 @@ export const ExercisesListItem: React.FC<ExercisesListItemProps> = ({
       <div className={styles.container}>
         <div className={styles.imageContainer}>
           {image ? (
-            <Image width={100} height={100} src={image} alt={item.name} />
+            <Image
+              style={{ borderRadius: '5px' }}
+              width={100}
+              height={100}
+              src={image}
+              alt={item.name}
+            />
           ) : (
             <div style={{ width: '100px', height: '100px' }}>
               <Skeleton.Image active={true} />
