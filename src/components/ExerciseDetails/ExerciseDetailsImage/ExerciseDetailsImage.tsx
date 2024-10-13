@@ -68,7 +68,13 @@ export const ExerciseDetailsImage: React.FC<ExerciseDetailsImageProps> = ({
         )}
 
         {image ? (
-          <Image height={'100%'} src={image} preview={false} alt={exerciseId} />
+          <Image
+            width={'230px'}
+            height={'100%'}
+            src={image}
+            preview={false}
+            alt={exerciseId}
+          />
         ) : (
           <Skeleton.Image active={true} />
         )}
