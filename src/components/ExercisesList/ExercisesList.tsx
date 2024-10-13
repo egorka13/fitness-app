@@ -16,6 +16,7 @@ import {
 } from '@ant-design/icons';
 import { doSignOut, useAuth } from '../../context/AuthContext';
 import { Navigate, useNavigate } from 'react-router-dom';
+import { sortGroupedListByPopularFirst } from '../../utils/utils';
 
 export type TExercisesList = Record<ExerciseGroup, any>;
 
@@ -25,6 +26,7 @@ export interface ExercisesItem {
   group: ExerciseGroup;
   isNoWeight?: boolean;
   isDoubleSided?: boolean;
+  isPopular?: boolean;
 }
 
 export const ExercisesList: React.FC = () => {
@@ -48,13 +50,11 @@ export const ExercisesList: React.FC = () => {
       .then((snapshot) => {
         if (snapshot.exists()) {
           const uploadedList: TExercisesList = snapshot.val();
-          const flattenedList = [].concat.apply(
-            [],
-            Object.values(uploadedList)
-          );
+          const flattenedList = Object.values(uploadedList).flat();
+          const sortedFlatList = sortGroupedListByPopularFirst(flattenedList);
 
-          setExerciseList(flattenedList);
-          setDefaultExerciseList(flattenedList);
+          setExerciseList(sortedFlatList);
+          setDefaultExerciseList(sortedFlatList);
         } else {
           console.log('No data available');
         }
