@@ -162,9 +162,7 @@ export const ExerciseDetails: React.FC = () => {
               {exercise?.isDoubleSided ? '* на каждую из сторон' : null}
             </div>
           )}
-        </div>
 
-        <div className={styles.submitContainer}>
           <Button
             type="primary"
             icon={<SaveOutlined />}
