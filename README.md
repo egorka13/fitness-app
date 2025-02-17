@@ -1,6 +1,9 @@
-# Getting Started with Create React App
+Progressive Web App (PWA) built with React, TypeScript, and Firebase for users to track their fitness journey, log workouts, and analyze progress over time.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Key Features:
+- ✅ Workout Logging: Users can input exercises, sets, reps, weights, and duration.
+- ✅ Progress Visualization: Interactive charts (using Recharts) to display improvements over time.
+- ✅ Authentication & Cloud Sync: Firebase Authentication (Google, email/password) and Firestore for cloud storage.
 
 ## Available Scripts
 
