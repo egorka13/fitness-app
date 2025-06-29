@@ -10,6 +10,9 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.3.1",
+    "@supabase/auth-ui-react": "^0.4.7",
+    "@supabase/auth-ui-shared": "^0.1.8",
+    "@supabase/supabase-js": "^2.50.0",
     "antd": "^5.15.0",
     "firebase": "^10.8.1",
     "react": "^18.2.0",

@@ -2,7 +2,6 @@ import React from 'react';
 import styles from './ExercisesList.module.scss';
 import { ExercisesListItem } from './ExercisesListItem/ExercisesListItem';
 import { Button, Tag, message } from 'antd';
-import { getDatabase, ref, child, get } from 'firebase/database';
 import {
   DEFAULT_EXERCISE_GROUPS,
   ExcerciseGroupColorMapping,
@@ -14,24 +13,27 @@ import {
   LogoutOutlined,
   ReloadOutlined,
 } from '@ant-design/icons';
-import { doSignOut, useAuth } from '../../context/AuthContext';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { sortGroupedListByPopularFirst } from '../../utils/utils';
+import { Session } from '@supabase/supabase-js';
 
 export type TExercisesList = Record<ExerciseGroup, any>;
 
 export interface ExercisesItem {
   id: string;
   name: string;
+  title: string;
   group: ExerciseGroup;
+  imageUrl: string;
+  isPopular?: boolean;
   isNoWeight?: boolean;
   isDoubleSided?: boolean;
-  isPopular?: boolean;
 }
 
-export const ExercisesList: React.FC = () => {
+export const ExercisesList: React.FC<{
+  session: Session;
+}> = ({ session }) => {
   const navigate = useNavigate();
-  const { userLoggedIn } = useAuth();
 
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -44,20 +46,17 @@ export const ExercisesList: React.FC = () => {
   );
 
   React.useEffect(() => {
-    const dbRef = ref(getDatabase());
+    fetch('http://localhost:8000/exercises', {
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        const sortedFlatList = sortGroupedListByPopularFirst(data || []);
 
-    get(child(dbRef, 'exercises'))
-      .then((snapshot) => {
-        if (snapshot.exists()) {
-          const uploadedList: TExercisesList = snapshot.val();
-          const flattenedList = Object.values(uploadedList).flat();
-          const sortedFlatList = sortGroupedListByPopularFirst(flattenedList);
-
-          setExerciseList(sortedFlatList);
-          setDefaultExerciseList(sortedFlatList);
-        } else {
-          console.log('No data available');
-        }
+        setExerciseList(sortedFlatList);
+        setDefaultExerciseList(sortedFlatList);
       })
       .catch((error) => {
         messageApi.open({
@@ -66,7 +65,6 @@ export const ExercisesList: React.FC = () => {
         });
         console.error(error);
       });
-    // eslint-disable-next-line
   }, []);
 
   const handleFiltersReset = React.useCallback(() => {
@@ -96,7 +94,7 @@ export const ExercisesList: React.FC = () => {
 
   return (
     <>
-      {!userLoggedIn && <Navigate to={'/auth'} replace={true} />}
+      {/* {!session && <Navigate to={'/auth'} replace={true} />} */}
 
       {contextHolder}
 
@@ -128,11 +126,11 @@ export const ExercisesList: React.FC = () => {
           type="primary"
           icon={<LogoutOutlined />}
           size={'large'}
-          onClick={() =>
-            doSignOut().then(() => {
-              navigate('auth');
-            })
-          }
+          // onClick={() =>
+          //   doSignOut().then(() => {
+          //     navigate('auth');
+          //   })
+          // }
         >
           Log out
         </Button>

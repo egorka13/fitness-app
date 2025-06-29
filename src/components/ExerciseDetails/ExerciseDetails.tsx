@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import styles from './ExerciseDetails.module.scss';
 import { ExerciseDetailsHistoryTable } from './ExerciseDetailsHistoryTable/ExerciseDetailsHistoryTable';
 import { ExerciseDetailsImage } from './ExerciseDetailsImage/ExerciseDetailsImage';
@@ -8,26 +8,25 @@ import { ExerciseGroup } from '../../constants/ExercisesGroups';
 import { Button, ConfigProvider, InputNumber, message } from 'antd';
 import { SaveOutlined } from '@ant-design/icons';
 
-import { child, get, getDatabase, push, ref, set } from 'firebase/database';
 import { ExerciseDTO } from './ExerciseDetailsHistoryTable/types';
-import { useAuth } from '../../context/AuthContext';
 import { ExercisesItem } from '../ExercisesList/ExercisesList';
+import { Session } from '@supabase/supabase-js';
 
 interface ExerciseDetailsInnerState {
-  repeats: number;
+  reps: number;
   weight: number | null;
 }
 
-export const ExerciseDetails: React.FC = () => {
-  const { userLoggedIn, currentUser } = useAuth();
-
+export const ExerciseDetails: React.FC<{ session: Session }> = ({
+  session,
+}) => {
   const [messageApi, contextHolder] = message.useMessage();
 
   const { id, group } = useParams();
 
   const [formState, setFormState] = React.useState<ExerciseDetailsInnerState>({
     weight: 4,
-    repeats: 15,
+    reps: 15,
   });
   const [exercise, setExercise] = React.useState<ExercisesItem>();
 
@@ -44,39 +43,48 @@ export const ExerciseDetails: React.FC = () => {
   }, []);
 
   const handleFormSubmit = React.useCallback(() => {
-    const db = getDatabase();
-    const historyRecordsListRef = ref(db, `history/${currentUser.uid}/${id}`);
-    const newHistoryRecordRef = push(historyRecordsListRef);
-
-    set(newHistoryRecordRef, {
-      date: Date.now(),
-      repeats: formState.repeats,
-      weight: formState.weight,
-    }).catch((error) => {
-      messageApi.open({
-        type: 'error',
-        content: error?.message || 'Something went wrong',
+    fetch(`http://localhost:8000/exercises/${id}/history`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        repeats: formState.reps,
+        weight: formState.weight,
+      }),
+    })
+      .then((response) => {
+        if (response.ok) {
+          messageApi.open({
+            type: 'success',
+            content: 'Successfully saved',
+          });
+        }
+      })
+      .catch((error) => {
+        messageApi.open({
+          type: 'error',
+          content: error?.message || 'Something went wrong',
+        });
+        console.error(error);
       });
-      console.error(error);
-    });
-  }, [id, formState.repeats, formState.weight, messageApi]);
+  }, [id, formState.reps, formState.weight, messageApi]);
 
   React.useEffect(() => {
-    const dbRef = ref(getDatabase());
-
     if (group) {
-      get(child(dbRef, `exercises/${group}`))
-        .then((snapshot) => {
-          if (snapshot.exists()) {
-            const exercisesInGroup: ExercisesItem[] = snapshot.val();
-            const currentExercise = exercisesInGroup.find(
-              (item) => item.id === id
-            );
-
-            setExercise(currentExercise);
+      fetch(`http://localhost:8000/exercises/${id}`, {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((data: ExercisesItem) => {
+          if (data) {
+            setExercise(data);
             setFormState((prev) => ({
               ...prev,
-              weight: currentExercise?.isNoWeight ? null : prev.weight,
+              weight: data?.isNoWeight ? null : prev.weight,
             }));
           } else {
             console.log('No data available');
@@ -91,16 +99,23 @@ export const ExerciseDetails: React.FC = () => {
         });
     }
 
-    // initially load list with records
-    get(child(dbRef, `history/${currentUser.uid}/${id}`))
-      .then((snapshot) => {
-        if (snapshot.exists()) {
-          const uploadedList: Record<string, ExerciseDTO> = snapshot.val();
-          console.log(uploadedList);
-          const lastRecord = Object.values(uploadedList).pop();
+    fetch(`http://localhost:8000/exercises/${id}/history`, {
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data: ExerciseDTO[]) => {
+        if (data) {
+          console.log(data);
+          const lastRecord = data[0];
           if (lastRecord) {
-            const { weight, repeats } = lastRecord;
-            setFormState((prev) => ({ ...prev, weight, repeats }));
+            const { weight, reps } = lastRecord;
+            setFormState((prev) => ({
+              ...prev,
+              weight: Number(weight),
+              reps: reps,
+            }));
           }
         } else {
           console.log('No data available');
@@ -126,19 +141,21 @@ export const ExerciseDetails: React.FC = () => {
         },
       }}
     >
-      {!userLoggedIn && <Navigate to={'/auth'} replace={true} />}
-
       {contextHolder}
 
       <div className={styles.detailsContainer}>
-        <ExerciseDetailsImage exerciseId={id} group={group as ExerciseGroup} />
+        <ExerciseDetailsImage
+          exerciseId={id}
+          group={group as ExerciseGroup}
+          exercise={exercise}
+        />
 
         <div className={styles.formContainer}>
           <InputNumber
             size="large"
             min={1}
             max={100000}
-            value={formState.repeats}
+            value={formState.reps}
             addonBefore="n"
             onChange={handleRepeatsChange}
           />
@@ -155,7 +172,7 @@ export const ExerciseDetails: React.FC = () => {
                 size="large"
                 min={1}
                 max={100000}
-                value={formState.weight}
+                value={Number(formState.weight)}
                 addonBefore="кг"
                 onChange={handleWeightChange}
               />
@@ -173,7 +190,9 @@ export const ExerciseDetails: React.FC = () => {
           </Button>
         </div>
 
-        {id && <ExerciseDetailsHistoryTable exerciseId={id} />}
+        {id && (
+          <ExerciseDetailsHistoryTable exerciseId={id} session={session} />
+        )}
       </div>
     </ConfigProvider>
   );

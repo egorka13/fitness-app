@@ -6,6 +6,11 @@ import {
   CartesianGrid,
   Area,
   Tooltip,
+  ComposedChart,
+  Legend,
+  Bar,
+  Line,
+  Scatter,
 } from 'recharts';
 import { ExerciseDetailsGraphProps } from './types';
 
@@ -14,15 +19,31 @@ export const ExerciseDetailsGraph: React.FC<ExerciseDetailsGraphProps> = ({
 }) => {
   const graphData = [...data]
     .sort((a, b) => a.key - b.key)
+    .reverse()
     .map((record, index) => ({
       name: index + 1,
-      uv: record.weight,
-      // pv: record.repeats,
+      weight: record.weight,
+      reps: record.reps,
     }));
 
   return (
     <>
       {graphData.length >= 2 ? (
+        <ComposedChart
+          width={document.body.clientWidth}
+          height={200}
+          data={graphData}
+          margin={{ top: 0, right: 30, left: -10, bottom: 0 }}
+        >
+          {/* <CartesianGrid stroke="#666666" /> */}
+          <XAxis dataKey="name" scale="band" />
+          <YAxis />
+          <Legend />
+          <Bar dataKey="reps" barSize={20} fill="#413ea0" />
+          <Line type="monotone" dataKey="weight" stroke="#ff7300" />
+        </ComposedChart>
+      ) : null}
+      {/* {graphData.length >= 2 ? (
         <AreaChart
           width={document.body.clientWidth}
           height={200}
@@ -45,20 +66,20 @@ export const ExerciseDetailsGraph: React.FC<ExerciseDetailsGraphProps> = ({
           <Tooltip />
           <Area
             type="monotone"
-            dataKey="uv"
+            dataKey="weight"
             stroke="#8884d8"
             fillOpacity={1}
             fill="url(#colorUv)"
           />
           <Area
             type="monotone"
-            dataKey="pv"
+            dataKey="reps"
             stroke="#82ca9d"
             fillOpacity={1}
             fill="url(#colorPv)"
           />
         </AreaChart>
-      ) : null}
+      ) : null} */}
     </>
   );
 };
