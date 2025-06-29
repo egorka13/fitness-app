@@ -4,13 +4,13 @@ import { ExerciseRecord } from './types';
 export const columns: ColumnsType<ExerciseRecord> = [
   {
     title: 'Дата',
-    dataIndex: 'date',
-    key: 'date',
+    dataIndex: 'createdAt',
+    key: 'createdAt',
   },
   {
     title: 'Повторения',
-    dataIndex: 'repeats',
-    key: 'age',
+    dataIndex: 'reps',
+    key: 'reps',
   },
   {
     title: 'Вес, кг',

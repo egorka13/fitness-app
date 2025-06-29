@@ -1,70 +1,23 @@
 import React from 'react';
-import {
-  createUserWithEmailAndPassword,
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-} from 'firebase/auth';
-import { auth } from '../App';
+import { Session } from '@supabase/supabase-js';
 
-const AuthContext = React.createContext<{
-  currentUser: any;
-  userLoggedIn: boolean;
-  loading: boolean;
-}>({ currentUser: null, userLoggedIn: false, loading: false });
-
-export function useAuth() {
-  return React.useContext(AuthContext);
+interface IAuthContext {
+  session: Session | null;
 }
 
-export const doCreateUserWithEmailAndPassword = async (
-  email: string,
-  password: string
-) => {
-  return createUserWithEmailAndPassword(auth, email, password);
-};
+const AuthContext = React.createContext<IAuthContext>({
+  session: null,
+});
 
-export const doSignInWithEmailAndPassword = (
-  email: string,
-  password: string
-) => {
-  return signInWithEmailAndPassword(auth, email, password);
-};
-
-export const doSignOut = () => {
-  return auth.signOut();
-};
-
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [currentUser, setCurrentUser] = React.useState(null);
-  const [userLoggedIn, setUserLoggedIn] = React.useState(false);
-  const [loading, setLoading] = React.useState(true);
-
-  React.useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, initializeUser);
-
-    return unsubscribe;
-  }, []);
-
-  async function initializeUser(user: any) {
-    if (user) {
-      setCurrentUser({ ...user });
-      setUserLoggedIn(true);
-    } else {
-      setCurrentUser(null);
-      setUserLoggedIn(false);
-    }
-    setLoading(false);
-  }
-
-  const value = {
-    currentUser,
-    userLoggedIn,
-    loading,
-  };
-
+export const AuthContextProvider = ({
+  session,
+  children,
+}: React.PropsWithChildren<IAuthContext>) => {
   return (
-    <AuthContext.Provider value={value}>
-      {!loading && children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={{ session }}>{children}</AuthContext.Provider>
   );
-}
+};
+
+export const useAuthContext = () => {
+  return React.useContext(AuthContext);
+};

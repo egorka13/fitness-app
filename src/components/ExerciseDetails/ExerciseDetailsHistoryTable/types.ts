@@ -4,15 +4,15 @@ export interface ExerciseDetailsHistoryTableProps {
 
 // backend model
 export interface ExerciseDTO {
-  date: number;
-  repeats: number;
-  weight: number;
+  createdAt: string;
+  reps: number;
+  weight: string;
 }
 
 // frontend model
 export interface ExerciseRecord {
   key: number;
-  date: string;
-  repeats: number;
-  weight: number;
+  createdAt: string;
+  reps: number;
+  weight: string;
 }

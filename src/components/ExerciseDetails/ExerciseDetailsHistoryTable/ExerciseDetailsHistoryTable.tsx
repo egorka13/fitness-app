@@ -1,51 +1,47 @@
 import React from 'react';
 import styles from '../ExerciseDetails.module.scss';
 import { ConfigProvider, Table, message } from 'antd';
-import { getDatabase, ref, child, get, onValue } from 'firebase/database';
 import { columns } from './constants';
 import {
   ExerciseDTO,
   ExerciseDetailsHistoryTableProps,
   ExerciseRecord,
 } from './types';
-import { useAuth } from '../../../context/AuthContext';
 import { ExerciseDetailsGraph } from '../ExerciseDetailsGraph/ExerciseDetailsGraph';
+import { useAuthContext } from '../../../context/AuthContext';
+import { useApi } from '../../../hooks/useApi';
 
 export const ExerciseDetailsHistoryTable: React.FC<
   ExerciseDetailsHistoryTableProps
 > = ({ exerciseId }) => {
-  const { currentUser } = useAuth();
+  const { session } = useAuthContext();
+
+  const { get } = useApi(session);
 
   const [messageApi, contextHolder] = message.useMessage();
 
   const [records, setRecords] = React.useState<ExerciseRecord[]>([]);
 
-  const handleListUpdate = React.useCallback(
-    (newRecords: Record<string, ExerciseDTO>) => {
-      if (!newRecords) return;
+  const handleListUpdate = React.useCallback((newRecords: ExerciseDTO[]) => {
+    if (!newRecords) return;
 
-      const newList: ExerciseRecord[] = Object.values(newRecords)?.map(
-        (record, index) => ({
-          ...record,
-          key: index,
-          date: new Date(record.date).toLocaleString(),
-        })
-      );
+    const newList: ExerciseRecord[] = newRecords?.map((record, index) => ({
+      ...record,
+      key: index,
+      createdAt: new Date(record.createdAt)
+        .toISOString()
+        .replace('T', ' ')
+        .split('.')[0],
+    }));
 
-      setRecords(newList.reverse());
-    },
-    []
-  );
+    setRecords(newList);
+  }, []);
 
   React.useEffect(() => {
-    const dbRef = ref(getDatabase());
-
-    // initially load list with records
-    get(child(dbRef, `history/${currentUser.uid}/${exerciseId}`))
-      .then((snapshot) => {
-        if (snapshot.exists()) {
-          const uploadedList: Record<string, ExerciseDTO> = snapshot.val();
-          handleListUpdate(uploadedList);
+    get(`exercises/${exerciseId}/history`)
+      .then((data: ExerciseDTO[]) => {
+        if (data) {
+          handleListUpdate(data);
         } else {
           console.log('No data available');
         }
@@ -57,15 +53,6 @@ export const ExerciseDetailsHistoryTable: React.FC<
         });
         console.error(error);
       });
-
-    // subscribe on records list updates
-    const db = getDatabase();
-    const historyRef = ref(db, `history/${currentUser.uid}/${exerciseId}`);
-    onValue(historyRef, (snapshot) => {
-      const uploadedList: Record<string, ExerciseDTO> = snapshot.val();
-      handleListUpdate(uploadedList);
-    });
-    // eslint-disable-next-line
   }, []);
 
   return (
