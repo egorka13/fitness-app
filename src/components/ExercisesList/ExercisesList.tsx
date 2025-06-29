@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import styles from './ExercisesList.module.scss';
 import { ExercisesListItem } from './ExercisesListItem/ExercisesListItem';
 import { Button, Tag, message } from 'antd';
@@ -15,6 +15,7 @@ import {
 } from '@ant-design/icons';
 import { sortGroupedListByPopularFirst } from '../../utils/utils';
 import { useAuthContext } from '../../context/AuthContext';
+import { useApi } from '../../hooks/useApi';
 
 export type TExercisesList = Record<ExerciseGroup, any>;
 
@@ -42,13 +43,10 @@ export const ExercisesList: React.FC = () => {
     DEFAULT_EXERCISE_GROUPS
   );
 
+  const { get } = useApi(session);
+
   React.useEffect(() => {
-    fetch('http://localhost:8000/exercises', {
-      headers: {
-        Authorization: `Bearer ${session?.access_token}`,
-      },
-    })
-      .then((response) => response.json())
+    get('exercises')
       .then((data) => {
         const sortedFlatList = sortGroupedListByPopularFirst(data || []);
 

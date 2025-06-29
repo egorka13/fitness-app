@@ -9,11 +9,14 @@ import {
 } from './types';
 import { ExerciseDetailsGraph } from '../ExerciseDetailsGraph/ExerciseDetailsGraph';
 import { useAuthContext } from '../../../context/AuthContext';
+import { useApi } from '../../../hooks/useApi';
 
 export const ExerciseDetailsHistoryTable: React.FC<
   ExerciseDetailsHistoryTableProps
 > = ({ exerciseId }) => {
   const { session } = useAuthContext();
+
+  const { get } = useApi(session);
 
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -35,15 +38,9 @@ export const ExerciseDetailsHistoryTable: React.FC<
   }, []);
 
   React.useEffect(() => {
-    fetch(`http://localhost:8000/exercises/${exerciseId}/history`, {
-      headers: {
-        Authorization: `Bearer ${session?.access_token}`,
-      },
-    })
-      .then((response) => response.json())
+    get(`exercises/${exerciseId}/history`)
       .then((data: ExerciseDTO[]) => {
         if (data) {
-          console.log(data);
           handleListUpdate(data);
         } else {
           console.log('No data available');

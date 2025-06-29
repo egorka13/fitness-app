@@ -11,6 +11,7 @@ import { SaveOutlined } from '@ant-design/icons';
 import { ExerciseDTO } from './ExerciseDetailsHistoryTable/types';
 import { ExercisesItem } from '../ExercisesList/ExercisesList';
 import { useAuthContext } from '../../context/AuthContext';
+import { useApi } from '../../hooks/useApi';
 
 interface ExerciseDetailsInnerState {
   reps: number;
@@ -23,6 +24,8 @@ export const ExerciseDetails: React.FC = () => {
   const [messageApi, contextHolder] = message.useMessage();
 
   const { id, group } = useParams();
+
+  const { get, post } = useApi(session);
 
   const [formState, setFormState] = React.useState<ExerciseDetailsInnerState>({
     weight: 4,
@@ -43,16 +46,9 @@ export const ExerciseDetails: React.FC = () => {
   }, []);
 
   const handleFormSubmit = React.useCallback(() => {
-    fetch(`http://localhost:8000/exercises/${id}/history`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${session?.access_token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        repeats: formState.reps,
-        weight: formState.weight,
-      }),
+    post(`exercises/${id}/history`, {
+      repeats: formState.reps,
+      weight: formState.weight,
     })
       .then((response) => {
         if (response.ok) {
@@ -73,12 +69,7 @@ export const ExerciseDetails: React.FC = () => {
 
   React.useEffect(() => {
     if (group) {
-      fetch(`http://localhost:8000/exercises/${id}`, {
-        headers: {
-          Authorization: `Bearer ${session?.access_token}`,
-        },
-      })
-        .then((response) => response.json())
+      get(`exercises/${id}`)
         .then((data: ExercisesItem) => {
           if (data) {
             setExercise(data);
@@ -99,15 +90,9 @@ export const ExerciseDetails: React.FC = () => {
         });
     }
 
-    fetch(`http://localhost:8000/exercises/${id}/history`, {
-      headers: {
-        Authorization: `Bearer ${session?.access_token}`,
-      },
-    })
-      .then((response) => response.json())
+    get(`exercises/${id}/history`)
       .then((data: ExerciseDTO[]) => {
         if (data) {
-          console.log(data);
           const lastRecord = data[0];
           if (lastRecord) {
             const { weight, reps } = lastRecord;
