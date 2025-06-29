@@ -1,8 +1,5 @@
-import { Session } from '@supabase/supabase-js';
-
 export interface ExerciseDetailsHistoryTableProps {
   exerciseId: string;
-  session: Session;
 }
 
 // backend model

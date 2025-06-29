@@ -12,6 +12,7 @@ import { ThemeSupa } from '@supabase/auth-ui-shared';
 
 import firebaseConfig from './configs/FirebaseConfig';
 import supabaseConfig from './configs/SupabaseConfig';
+import { AuthContextProvider } from './context/AuthContext';
 
 export const app = initializeApp(firebaseConfig);
 
@@ -45,15 +46,17 @@ function App() {
   return (
     <div className={styles.app}>
       <FireBaseContextProvider firebaseApp={app}>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<ExercisesList session={session} />} />
-            <Route
-              path="/exercise/:group/:id"
-              element={<ExerciseDetails session={session} />}
-            />
-          </Routes>
-        </BrowserRouter>
+        <AuthContextProvider session={session}>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<ExercisesList />} />
+              <Route
+                path="/exercise/:group/:id"
+                element={<ExerciseDetails />}
+              />
+            </Routes>
+          </BrowserRouter>
+        </AuthContextProvider>
       </FireBaseContextProvider>
     </div>
   );

@@ -10,16 +10,16 @@ import { SaveOutlined } from '@ant-design/icons';
 
 import { ExerciseDTO } from './ExerciseDetailsHistoryTable/types';
 import { ExercisesItem } from '../ExercisesList/ExercisesList';
-import { Session } from '@supabase/supabase-js';
+import { useAuthContext } from '../../context/AuthContext';
 
 interface ExerciseDetailsInnerState {
   reps: number;
   weight: number | null;
 }
 
-export const ExerciseDetails: React.FC<{ session: Session }> = ({
-  session,
-}) => {
+export const ExerciseDetails: React.FC = () => {
+  const { session } = useAuthContext();
+
   const [messageApi, contextHolder] = message.useMessage();
 
   const { id, group } = useParams();
@@ -46,7 +46,7 @@ export const ExerciseDetails: React.FC<{ session: Session }> = ({
     fetch(`http://localhost:8000/exercises/${id}/history`, {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${session.access_token}`,
+        Authorization: `Bearer ${session?.access_token}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -75,7 +75,7 @@ export const ExerciseDetails: React.FC<{ session: Session }> = ({
     if (group) {
       fetch(`http://localhost:8000/exercises/${id}`, {
         headers: {
-          Authorization: `Bearer ${session.access_token}`,
+          Authorization: `Bearer ${session?.access_token}`,
         },
       })
         .then((response) => response.json())
@@ -101,7 +101,7 @@ export const ExerciseDetails: React.FC<{ session: Session }> = ({
 
     fetch(`http://localhost:8000/exercises/${id}/history`, {
       headers: {
-        Authorization: `Bearer ${session.access_token}`,
+        Authorization: `Bearer ${session?.access_token}`,
       },
     })
       .then((response) => response.json())
@@ -190,9 +190,7 @@ export const ExerciseDetails: React.FC<{ session: Session }> = ({
           </Button>
         </div>
 
-        {id && (
-          <ExerciseDetailsHistoryTable exerciseId={id} session={session} />
-        )}
+        {id && <ExerciseDetailsHistoryTable exerciseId={id} />}
       </div>
     </ConfigProvider>
   );

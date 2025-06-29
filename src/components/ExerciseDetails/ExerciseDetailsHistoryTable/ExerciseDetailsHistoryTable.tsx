@@ -8,10 +8,13 @@ import {
   ExerciseRecord,
 } from './types';
 import { ExerciseDetailsGraph } from '../ExerciseDetailsGraph/ExerciseDetailsGraph';
+import { useAuthContext } from '../../../context/AuthContext';
 
 export const ExerciseDetailsHistoryTable: React.FC<
   ExerciseDetailsHistoryTableProps
-> = ({ exerciseId, session }) => {
+> = ({ exerciseId }) => {
+  const { session } = useAuthContext();
+
   const [messageApi, contextHolder] = message.useMessage();
 
   const [records, setRecords] = React.useState<ExerciseRecord[]>([]);
@@ -34,7 +37,7 @@ export const ExerciseDetailsHistoryTable: React.FC<
   React.useEffect(() => {
     fetch(`http://localhost:8000/exercises/${exerciseId}/history`, {
       headers: {
-        Authorization: `Bearer ${session.access_token}`,
+        Authorization: `Bearer ${session?.access_token}`,
       },
     })
       .then((response) => response.json())

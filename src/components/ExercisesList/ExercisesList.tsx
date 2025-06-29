@@ -13,9 +13,8 @@ import {
   LogoutOutlined,
   ReloadOutlined,
 } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
 import { sortGroupedListByPopularFirst } from '../../utils/utils';
-import { Session } from '@supabase/supabase-js';
+import { useAuthContext } from '../../context/AuthContext';
 
 export type TExercisesList = Record<ExerciseGroup, any>;
 
@@ -30,10 +29,8 @@ export interface ExercisesItem {
   isDoubleSided?: boolean;
 }
 
-export const ExercisesList: React.FC<{
-  session: Session;
-}> = ({ session }) => {
-  const navigate = useNavigate();
+export const ExercisesList: React.FC = () => {
+  const { session } = useAuthContext();
 
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -48,7 +45,7 @@ export const ExercisesList: React.FC<{
   React.useEffect(() => {
     fetch('http://localhost:8000/exercises', {
       headers: {
-        Authorization: `Bearer ${session.access_token}`,
+        Authorization: `Bearer ${session?.access_token}`,
       },
     })
       .then((response) => response.json())
@@ -94,8 +91,6 @@ export const ExercisesList: React.FC<{
 
   return (
     <>
-      {/* {!session && <Navigate to={'/auth'} replace={true} />} */}
-
       {contextHolder}
 
       <div className={styles.container}>
