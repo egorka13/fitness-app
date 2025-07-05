@@ -41,7 +41,7 @@ export const ExerciseDetails: React.FC = () => {
 
   const handleRepeatsChange = React.useCallback((value: unknown) => {
     if (typeof value === 'number') {
-      setFormState((prev) => ({ ...prev, repeats: value }));
+      setFormState((prev) => ({ ...prev, reps: value }));
     }
   }, []);
 
