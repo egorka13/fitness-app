@@ -4,15 +4,17 @@ export interface ExerciseDetailsHistoryTableProps {
 
 // backend model
 export interface ExerciseDTO {
-  createdAt: string;
+  id: number;
+  exerciseId: number;
+  userId: string;
   reps: number;
-  weight: string;
+  weight: string; // i.e. "30.00"
+  createdAt: string;
+  count?: number; // for merged sets
+  merged?: boolean; // indicates if this record is a merged set
 }
 
 // frontend model
-export interface ExerciseRecord {
+export interface ExerciseRecord extends ExerciseDTO {
   key: number;
-  createdAt: string;
-  reps: number;
-  weight: string;
 }
