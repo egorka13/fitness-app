@@ -50,13 +50,12 @@ export const ExerciseDetails: React.FC = () => {
       repeats: formState.reps,
       weight: formState.weight,
     })
-      .then((response) => {
-        if (response.ok) {
-          messageApi.open({
-            type: 'success',
-            content: 'Successfully saved',
-          });
-        }
+      .then(() => {
+        window.location.reload();
+        messageApi.open({
+          type: 'success',
+          content: 'Successfully saved',
+        });
       })
       .catch((error) => {
         messageApi.open({
