@@ -28,10 +28,11 @@ export const ExerciseDetailsHistoryTable: React.FC<
     const newList: ExerciseRecord[] = newRecords?.map((record, index) => ({
       ...record,
       key: index,
-      createdAt: new Date(record.createdAt)
-        .toISOString()
-        .replace('T', ' ')
-        .split('.')[0],
+      createdAt:
+        new Date(record.createdAt)
+          .toISOString()
+          .replace('T', ' ')
+          .split('.')[0] + `${record.merged ? ` x${record.count}` : ''}`,
     }));
 
     setRecords(newList);
