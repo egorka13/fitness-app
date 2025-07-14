@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from '../ExerciseDetails.module.scss';
-import { ConfigProvider, Table, message } from 'antd';
+import { Badge, ConfigProvider, Table, message } from 'antd';
 import { columns } from './constants';
 import {
   ExerciseDTO,
@@ -28,11 +28,24 @@ export const ExerciseDetailsHistoryTable: React.FC<
     const newList: ExerciseRecord[] = newRecords?.map((record, index) => ({
       ...record,
       key: index,
-      createdAt:
-        new Date(record.createdAt)
-          .toISOString()
-          .replace('T', ' ')
-          .split('.')[0] + `${record.merged ? ` x${record.count}` : ''}`,
+      repsCustom: (
+        <>
+          {record.reps}{' '}
+          {record.merged ? (
+            <Badge
+              color="green"
+              count={`x${record.count}`}
+              style={{ marginLeft: '8px' }}
+            />
+          ) : (
+            ''
+          )}
+        </>
+      ),
+      createdAt: new Date(record.createdAt)
+        .toISOString()
+        .replace('T', ' ')
+        .split('.')[0],
     }));
 
     setRecords(newList);

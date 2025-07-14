@@ -17,4 +17,5 @@ export interface ExerciseDTO {
 // frontend model
 export interface ExerciseRecord extends ExerciseDTO {
   key: number;
+  repsCustom: React.ReactNode; // custom representation of reps with a badge for merged sets
 }
