@@ -9,8 +9,8 @@ export const columns: ColumnsType<ExerciseRecord> = [
   },
   {
     title: 'Повторения',
-    dataIndex: 'reps',
-    key: 'reps',
+    dataIndex: 'repsCustom',
+    key: 'repsCustom',
   },
   {
     title: 'Вес, кг',
